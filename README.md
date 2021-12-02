@@ -1,4 +1,10 @@
-1. Run the application
+1. Install dependencies
+
+```
+yarn
+```
+
+2. Run the application
 
 ```
 docker-compose up -d
@@ -10,4 +16,4 @@ then
 yarn dev
 ```
 
-2. Go to http://localhost:3000
+3. Go to http://localhost:3000
