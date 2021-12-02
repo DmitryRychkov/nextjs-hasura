@@ -1,0 +1,39 @@
+version: "3.6"
+
+volumes:
+  db_data:
+
+networks:
+  hasura-net:
+    name: hasura-net
+
+services:
+  postgres:
+    container_name: nextjs-hasura.postgres
+    image: postgres:14
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: test
+    networks:
+      - hasura-net
+
+  hasura:
+    container_name: nextjs-hasura.hasura
+    image: hasura/graphql-engine:latest.cli-migrations-v2
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./metadata:/hasura-metadata
+      - ./migrations:/hasura-migrations
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:test@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: "myadminsecretkey"
+    depends_on:
+      - "postgres"
+    networks:
+      - hasura-net
