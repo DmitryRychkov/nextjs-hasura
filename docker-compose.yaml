@@ -30,10 +30,28 @@ services:
       - ./migrations:/hasura-migrations
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:test@postgres:5432/postgres
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_ADMIN_SECRET: "myadminsecretkey"
     depends_on:
       - "postgres"
+    networks:
+      - hasura-net
+
+  next:
+    container_name: nextjs-hasura.next
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    command: yarn dev
+    depends_on:
+      - "hasura"
     networks:
       - hasura-net
